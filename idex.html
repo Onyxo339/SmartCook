@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCook</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>SmartCook</h1>
+        <nav>
+            <button onclick="navigate('home')">Home</button>
+            <button onclick="navigate('about')">About Us</button>
+            <button onclick="navigate('support')">Support</button>
+        </nav>
+    </header>
+
+    <main>
+        <div id="filter-sort-section">
+            <div id="filter-section">
+                <label for="filter">Search:</label>
+                <input type="text" id="filter" oninput="filterRecipes()">
+            </div>
+
+            <div id="sort-section">
+                <label for="sort">Sort By:</label>
+                <select id="sort" onchange="sortRecipes()">
+                    <option value="name">Name</option>
+                    <option value="difficulty-asc">Difficulty (Upwardly)</option>
+                    <option value="difficulty-desc">Difficulty (Downwardly)</option>
+                </select>
+            </div>
+
+            <div id="difficulty-filter-section">
+                <h2>Select dishes by difficulty</h2>
+                <label for="simpleCheckbox">simple</label>
+                <input type="checkbox" id="simpleCheckbox" onclick="filterRecipes()">
+                <label for="averageCheckbox">average</label>
+                <input type="checkbox" id="averageCheckbox" onclick="filterRecipes()">
+                <label for="difficultCheckbox">difficult</label>
+                <input type="checkbox" id="difficultCheckbox" onclick="filterRecipes()">
+            </div>
+
+            <div id="type-filter-section">
+                <h2>Select dishes by type</h2>
+                <label for="mainCourseCheckbox">main course</label>
+                <input type="checkbox" id="mainCourseCheckbox" onclick="filterRecipes()">
+                <label for="dessertCheckbox">dessert</label>
+                <input type="checkbox" id="dessertCheckbox" onclick="filterRecipes()">
+                <label for="soupCheckbox">soup</label>
+                <input type="checkbox" id="soupCheckbox" onclick="filterRecipes()">
+                <label for="breakfastCheckbox">breakfast</label>
+                <input type="checkbox" id="breakfastCheckbox" onclick="filterRecipes()">
+                <label for="dinnerCheckbox">dinner</label>
+                <input type="checkbox" id="dinnerCheckbox" onclick="filterRecipes()">
+            </div>
+
+            <div id="price-filter-section">
+                <h2>Select dishes by price</h2>
+                <label for="cheapCheckbox">cheap</label>
+                <input type="checkbox" id="cheapCheckbox" onclick="filterRecipes()">
+                <label for="mediumCheckbox">medium</label>
+                <input type="checkbox" id="mediumCheckbox" onclick="filterRecipes()">
+                <label for="expensiveCheckbox">expensive</label>
+                <input type="checkbox" id="expensiveCheckbox" onclick="filterRecipes()">
+            </div>
+
+            <div id="tolerance-filter-section">
+                <h2>Select dishes by tolerance</h2>
+                <label for="vegetarianCheckbox">vegetarian</label>
+                <input type="checkbox" id="vegetarianCheckbox" onclick="filterRecipes()">
+                <label for="nutsCheckbox">nuts</label>
+                <input type="checkbox" id="nutsCheckbox" onclick="filterRecipes()">
+                <label for="glutenCheckbox">gluten</label>
+                <input type="checkbox" id="glutenCheckbox" onclick="filterRecipes()">
+                <label for="lactoseCheckbox">lactose</label>
+                <input type="checkbox" id="lactoseCheckbox" onclick="filterRecipes()">
+                <label for="spicyCheckbox">spicy</label>
+                <input type="checkbox" id="spicyCheckbox" onclick="filterRecipes()">
+                <label for="alcoholCheckbox">alcohol</label>
+                <input type="checkbox" id="alcoholCheckbox" onclick="filterRecipes()">
+                <label for="seaFoodCheckbox">sea food</label>
+                <input type="checkbox" id="seaFoodCheckbox" onclick="filterRecipes()">
+                <label for="mushroomsCheckbox">mushrooms</label>
+                <input type="checkbox" id="mushroomsCheckbox" onclick="filterRecipes()">
+            </div>
+        </div>
+
+        <div id="recipes-section"></div>
+    </main>
+
+    <script>
+        const recipes = [
+            { name: 'Těstoviny s rajčatovou omáčkou', difficulty: 'simple', type: 'main course', price: 'medium', tolerance: 'vegetarian'},
+            { name: 'Pečené kuře se zeleninou', difficulty: 'average', type: 'main course', price: 'expensive', tolerance: 'gluten'},
+            { name: 'Čokoládový dort', difficulty: 'difficult', type: 'dessert', price: 'expensive', tolerance: 'lactose'},
+            { name: 'Kuřecí salát s ořechy', difficulty: 'simple', type: 'dinner', price: 'cheap', tolerance: 'nuts'},
+            { name: 'Rybí polévka', difficulty: 'average', type: 'soup', price: 'medium', tolerance: 'sea food'},
+            { name: 'Tiramisu', difficulty: 'difficult', type: 'dessert', price: 'expensive', tolerance: 'lactose'},
+            { name: 'Smažený sýr', difficulty: 'simple', type: 'breakfast', price: 'cheap', tolerance: 'vegetarian'},
+            { name: 'Hovězí guláš', difficulty: 'average', type: 'main course', price: 'medium', tolerance: 'gluten'},
+            { name: 'Jablečný závin', difficulty: 'difficult', type: 'dessert', price: 'medium', tolerance: 'lactose'},
+            { name: 'Kuřecí kari', difficulty: 'average', type: 'main course', price: 'cheap', tolerance: 'spicy'},
+        ];
+
+        function init() {
+            const sortedRecipes = [...recipes].sort((a, b) => a.name.localeCompare(b.name));
+            displayRecipes(sortedRecipes);
+        }
+
+        function displayRecipes(recipesToShow) {
+            const recipesContainer = document.getElementById('recipes-section');
+            recipesContainer.innerHTML = '';
+
+            let rowDiv;
+            recipesToShow.forEach((recipe, index) => {
+                if (index % 2 === 0) {
+                    rowDiv = document.createElement('div');
+                    rowDiv.classList.add('row');
+                    recipesContainer.appendChild(rowDiv);
+                }
+
+                const recipeElement = document.createElement('div');
+                recipeElement.classList.add('recipe');
+                recipeElement.innerHTML = `<strong>${recipe.name}</strong> - Difficulty: ${getDifficultyLabel(recipe.difficulty)} - Type: ${recipe.type} - Price: ${getPriceLabel(recipe.price)} - Tolerance: ${recipe.tolerance}`;
+                recipeElement.addEventListener('click', () => handleRecipeClick(recipe.name));
+                rowDiv.appendChild(recipeElement);
+            });
+        }
+
+        function filterRecipes() {
+            const filterValue = document.getElementById('filter').value.toLowerCase();
+            const cheapCheckbox = document.getElementById('cheapCheckbox').checked;
+            const expensiveChecbox = document.getElementById('expensiveCheckbox').checked;
+            const mediumCheckbox = document.getElementById('mediumCheckbox').checked;
+            const mainCourseChecked = document.getElementById('mainCourseCheckbox').checked;
+            const dessertChecked = document.getElementById('dessertCheckbox').checked;
+            const soupChecked = document.getElementById('soupCheckbox').checked;
+            const breakfastChecked = document.getElementById('breakfastCheckbox').checked;
+            const dinnerChecked = document.getElementById('dinnerCheckbox').checked;
+            const simpleChecked = document.getElementById('simpleCheckbox').checked;
+            const averageChecked = document.getElementById('averageCheckbox').checked;
+            const difficultChecked = document.getElementById('difficultCheckbox').checked;
+            const vegetarianChecked = document.getElementById('vegetarianCheckbox').checked;
+            const nutsChecked = document.getElementById('nutsCheckbox').checked;
+            const glutenChecked = document.getElementById('glutenCheckbox').checked;
+            const lactoseChecked = document.getElementById('lactoseCheckbox').checked;
+            const spicyChecked = document.getElementById('spicyCheckbox').checked;
+            const alcoholChecked = document.getElementById('alcoholCheckbox').checked;
+            const seaFoodChecked = document.getElementById('seaFoodCheckbox').checked;
+            const mushroomsChecked = document.getElementById('mushroomsCheckbox').checked;
+
+            const filteredRecipes = recipes.filter(recipe => {
+                const nameMatches = recipe.name.toLowerCase().includes(filterValue);
+                const typeMatches = (
+                    (cheapCheckbox && recipe.price === 'cheap') ||
+                    (expensiveChecbox && recipe.price === 'expensive') ||
+                    (mediumCheckbox && recipe.price === 'medium') ||
+                    (mainCourseChecked && recipe.type === 'main course') ||
+                    (dessertChecked && recipe.type === 'dessert') ||
+                    (soupChecked && recipe.type === 'soup') ||
+                    (breakfastChecked && recipe.type === 'breakfast') ||
+                    (dinnerChecked && recipe.type === 'dinner') ||
+                    (simpleChecked && recipe.difficulty === 'simple') ||
+                    (averageChecked && recipe.difficulty === 'average') ||
+                    (difficultChecked && recipe.difficulty === 'difficult') ||
+                    (vegetarianChecked && recipe.tolerance === 'vegetarian') ||
+                    (nutsChecked && recipe.tolerance === 'nuts') ||
+                    (glutenChecked && recipe.tolerance === 'gluten') ||
+                    (lactoseChecked && recipe.tolerance === 'lactose') ||
+                    (spicyChecked && recipe.tolerance === 'spicy') ||
+                    (alcoholChecked && recipe.tolerance === 'alcohol') ||
+                    (seaFoodChecked && recipe.tolerance === 'sea food') ||
+                    (mushroomsChecked && recipe.tolerance === 'mushrooms')
+                );
+
+                return nameMatches && (typeMatches || (!cheapCheckbox && !expensiveChecbox && !mediumCheckbox && !mainCourseChecked && !dessertChecked && !soupChecked 
+                && !breakfastChecked && !dinnerChecked && !simpleChecked && !averageChecked && !difficultChecked && !vegetarianChecked && !nutsChecked && !glutenChecked 
+                && !lactoseChecked && !spicyChecked && !alcoholChecked && !seaFoodChecked && !mushroomsChecked));
+            });
+
+            displayRecipes(filteredRecipes);
+        }
+
+        function sortRecipes() {
+            const sortBy = document.getElementById('sort').value;
+            let sortedRecipes;
+
+            switch (sortBy) {
+                case 'name':
+                    sortedRecipes = [...recipes].sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                case 'difficulty-asc':
+                    sortedRecipes = [...recipes].sort((a, b) => customDifficultyOrder(a.difficulty, b.difficulty));
+                    break;
+                case 'difficulty-desc':
+                    sortedRecipes = [...recipes].sort((a, b) => customDifficultyOrder(b.difficulty, a.difficulty));
+                    break;
+                default:
+                    sortedRecipes = recipes;
+            }
+
+            displayRecipes(sortedRecipes);
+        }
+
+        function customDifficultyOrder(difficultyA, difficultyB) {
+            const order = { 'simple': 1, 'medium': 2, 'difficult': 3 };
+            return order[difficultyA] - order[difficultyB];
+        }
+
+        function getDifficultyLabel(difficulty) {
+            switch (difficulty) {
+                case 'simple':
+                    return 'simple';
+                case 'medium':
+                    return 'medium';
+                case 'difficult':
+                    return 'difficult';
+                default:
+                    return difficulty;
+            }
+        }
+
+        function getPriceLabel(price) {
+            switch (price) {
+                case 'cheap':
+                    return 'cheap';
+                case 'medium':
+                    return 'medium';
+                case 'expensive':
+                    return 'expensive';
+                default:
+                    return price;
+            }
+        }
+
+        function navigate(page) {
+            alert(`Navigating to ${page} page`);
+        }
+
+        function handleRecipeClick(recipeName) {
+            alert(`Clicked on recipe: ${recipeName}`);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
